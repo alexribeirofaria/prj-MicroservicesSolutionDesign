@@ -1,0 +1,60 @@
+.tituloHeader {
+  color: lightcyan;
+}
+
+.textBtnHeader {
+  color: #0d6efd;
+}
+
+.input-width {
+  width: 6.8rem;
+}
+
+.error-bi-input {
+  display: inline;
+
+}
+
+.not-error-input {
+  display: none;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+
+.error-input {
+  border: 0.1rem solid red;
+  border-radius: 0.2rem;
+}
+
+
+.max-height-scroll {
+  max-height: auto;
+  overflow-y: auto;
+}
+
+.form-content {
+  scrollbar-width: thin;
+  scrollbar-color: gray ;
+  border: 0;
+}
+
+/* Works on Chrome, Edge, and Safari */
+.form-content::-webkit-scrollbar {
+  width: 0.2rem;
+}
+
+.form-content::-webkit-scrollbar-track {
+  background-color: transparent ;
+  border: 0;
+}
+
+.form-content::-webkit-scrollbar-thumb {
+  background-color: transparent ;
+  border-radius: 0.4rem;
+  border: 0.1rem solid gray;
+}
+
+

@@ -1,0 +1,22 @@
+﻿services:
+  api-gateway:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5000
+      ASPNETCORE_HTTP_PORTS: 5000
+    ports:
+      - 5000:9000
+    volumes:
+      - ${LOCALAPPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${LOCALAPPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+  categoria-service:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+ 
+  despesa-service:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+
+  receita-service:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production

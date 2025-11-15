@@ -1,0 +1,86 @@
+﻿services:
+   api-gateway:
+      container_name: api-gateway 
+      labels:
+        - api-gateway
+      image: ${DOCKER_REGISTRY-}api-gateway
+      build: 
+          context: .
+          dockerfile: ./src/api-gateway/Dockerfile      
+      ports:
+          - 5000:9000
+      networks:
+        - gateway-net
+      environment:
+        - CONSUL_HOST=consul
+      depends_on:
+        - consul  
+
+   categoria-service:
+      container_name: categoria-service
+      labels:
+        - categoria-service
+      image: ${DOCKER_REGISTRY-}categoria-service
+      build: 
+        context: .
+        dockerfile: ./src/BackEnd/Services/CategoriaService/Dockerfile
+      networks:
+         - gateway-net
+      depends_on:
+        - consul 
+         
+   despesa-service:
+      container_name: despesa-service 
+      labels:
+        - despesa-service 
+      image: ${DOCKER_REGISTRY-}despesa-service
+      build: 
+        context: .
+        dockerfile: ./src/BackEnd/Services/DespesaService/Dockerfile      
+      networks:
+        - gateway-net
+      depends_on:
+        - consul  
+ 
+   receita-service:
+      container_name: receita-service 
+      labels:
+        - receita-service
+      image: ${DOCKER_REGISTRY-}receita-service
+      build: 
+         context: .
+         dockerfile: ./src/BackEnd/Services/ReceitaService/Dockerfile      
+      networks:
+        - gateway-net
+      depends_on:
+        - consul 
+         
+   consul:
+    image: consul:1.15.4
+    container_name: consul
+    hostname: consul
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+    ports:
+       - 8500:8500
+       - "8600:8600/udp"
+    networks:
+      - gateway-net
+    restart: always
+    command: [
+      "agent",
+      "-server",
+      "-ui",
+      "-bootstrap-expect=1",
+      "-client=0.0.0.0",
+      "-bind=0.0.0.0"
+    ]
+    deploy:
+      update_config:
+        order: start-first 
+
+networks:
+  gateway-net:
+    name: gateway-net
+    driver: bridge    
+     

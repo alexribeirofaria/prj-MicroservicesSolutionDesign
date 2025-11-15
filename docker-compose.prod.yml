@@ -1,0 +1,66 @@
+﻿services:
+   categoria-service:
+      image: alexfariakof:categoria-service
+      build: 
+        context: ./src/BackEnd
+        dockerfile: ./Services/CategoriaService/Dockerfile
+      container_name: categoria-service
+      hostname: categoria-service
+      networks:
+        - gateway-prod
+
+   despesa-service:
+      image: alexfariakof:despesa-service
+      build: 
+        context: ./src/BackEnd
+        dockerfile: /Services/DespesaService/Dockerfile
+      container_name: despesa-service
+      hostname: despesa-service
+      networks:
+        - gateway-prod
+
+   receita-service:
+      image: alexfariakof:receita-service
+      build: 
+         context: ./src/BackEnd
+         dockerfile: /Services/ReceitaService/Dockerfile
+      container_name: receita-service
+      hostname: receita-service
+      networks:
+        - gateway-prod
+
+   api-gateway:
+      image: alexfariakof:api-gateway
+      build: 
+          context: ./src/api-gateway
+          dockerfile: Dockerfile
+      container_name: api-gateway
+      ports:
+          - 5000:9000
+      networks:
+        - gateway-prod
+
+   consul:
+    image: consul:1.15.4
+    container_name: consul
+    hostname: "consul"
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+    ports:
+       - 8500:8500
+       - "8600:8600/udp"
+    command: [
+      "agent",
+      "-server",
+      "-ui",
+      "-node=server1",
+      "-bootstrap-expect=1",
+      "-client=0.0.0.0"
+    ]
+    networks:
+      - gateway-prod
+
+networks:
+  gateway:
+    name: gateway-prod
+    driver: bridge 

@@ -1,0 +1,9 @@
+@use '../../../styles/variables'as v;
+
+.menu-select {
+  background: #27ae60 !important;
+  border-radius: 0.4rem;
+  border-color: lightcyan;
+  box-sizing: 1rem;
+  cursor: pointer;
+}

@@ -1,0 +1,27 @@
+﻿services:
+   api-gateway:
+      environment:
+         ASPNETCORE_ENVIRONMENT: Development
+      image: alexfariakof:api-gateway
+      build: 
+        context: ./src/api-gateway
+        dockerfile: Dockerfile
+      container_name: api-gateway
+      hostname: api-gateway
+      ports:
+        - 5000:9000
+      volumes:
+          - ${LOCALAPPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+          - ${LOCALAPPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+          - ./src/api-gateway/ocelot.docker.json:/app/ocelot.json:ro
+          - ./src/api-gateway/ocelot.docker.development.json:/app/ocelot.development.json:ro
+      networks:
+          - gateway 
+      deploy:
+         update_config:
+           order: start-first
+
+networks:
+  gateway:
+    name: gateway
+    driver: bridge 

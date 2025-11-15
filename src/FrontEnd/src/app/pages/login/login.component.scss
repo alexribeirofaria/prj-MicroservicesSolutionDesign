@@ -1,0 +1,32 @@
+@use '../../../styles/variables' as v;
+
+.full-height {
+  height: v.$height-full; 
+}
+
+.tituloHeader {
+  color: v.$header-color; 
+}
+
+.textBtnHeader {
+  color: v.$primary-color;
+}
+
+.error-bi-input {
+  display: inline;
+}
+
+.not-error-input {
+  display: none;
+}
+
+.btn-google {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .google-icon {
+    width: 16px;
+    height: 16px;
+  }
+}

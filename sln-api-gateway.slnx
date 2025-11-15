@@ -1,0 +1,32 @@
+<Solution>
+  <Folder Name="/FrontEnd/">
+    <Project Path="src/FrontEnd/AngularApp.esproj">
+      <Build />
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Gateway/">
+    <Project Path="src/api-gateway/api-gateway.csproj" Id="4ef2b0b5-d0d1-4abd-8078-6c12ef4e37ae" />
+  </Folder>
+  <Folder Name="/IdentityServer/">
+    <Project Path="src/IdentityServer/STS.Server.csproj" />
+  </Folder>
+  <Folder Name="/Services/">
+    <Project Path="src/BackEnd/Services/AuthService/AuthService.csproj" />
+    <Project Path="src/BackEnd/Services/CategoriaService/CategoriaService.csproj" />
+    <Project Path="src/BackEnd/Services/DespesaService/DespesaService.csproj" />
+    <Project Path="src/BackEnd/Services/ReceitaService/ReceitaService.csproj" />
+  </Folder>
+  <Project Path="docker-compose.dcproj" Id="7900f85a-9b75-409e-96b7-6fb47f630975">
+    <Build />
+  </Project>
+  <Project Path="src/BackEnd/Application/Application.csproj" />
+  <Project Path="src/BackEnd/CrossCutting/CrossCutting.csproj" />
+  <Project Path="src/BackEnd/Domain/Domain.csproj" />
+  <Project Path="src/BackEnd/GlobalException/GlobalException.csproj" />
+  <Project Path="src/BackEnd/Infrastructure/Infrastructure.csproj" />
+  <Project Path="src/BackEnd/Migrations.DataSeeders/Migrations.DataSeeders.csproj" />
+  <Project Path="src/BackEnd/Migrations.MySqlServer/Migrations.MySqlServer.csproj" />
+  <Project Path="src/BackEnd/Repository.Mapping/Repository.Mapping.csproj" />
+  <Project Path="src/BackEnd/Repository/Repository.csproj" />
+</Solution>

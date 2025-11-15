@@ -1,0 +1,29 @@
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+USER app
+WORKDIR /app
+EXPOSE 5055
+EXPOSE 7199
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
+COPY ["LiteStreaming.STS/STS.Servercsproj", "LiteStreaming.STS/"]
+RUN dotnet restore "./LiteStreaming.STS/STS.Servercsproj"
+COPY . .
+
+WORKDIR "/src/LiteStreaming.STS"
+RUN dotnet build "./STS.Servercsproj" -c $BUILD_CONFIGURATION -o /app/build
+
+FROM build AS publish
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "./STS.Servercsproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+WORKDIR /app
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_URLS=https://+7199;http://+5055;
+COPY --from=publish /app/publish .
+COPY --from=build /app/build/appsettings.Docker.Development.json ./appsettings.json
+COPY --from=build /app/build/appsettings.Docker.Development.json ./appsettings.Development.json
+
+ENTRYPOINT ["dotnet", "STS.Serverdll"]

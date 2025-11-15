@@ -1,0 +1,121 @@
+﻿import { Component, OnInit, ViewChild } from "@angular/core";
+import dayjs from "dayjs";
+import { BarraFerramentaComponent, DataTableComponent, AlertComponent, ModalFormComponent, ModalConfirmComponent, AlertType } from "../../components";
+import { LancamentoDataSet, LancamentoColumns } from "../../models/datatable-config/lancamentos";
+import { ILancamento, Action } from "../../models";
+import { MenuService, FilterMesAnoService, LancamentoService } from "../../services";
+import { DespesasFormComponent } from "../despesas/despesas-form/despesas.form.component";
+import { ReceitasFormComponent } from "../receitas/receitas-form/receitas.form.component";
+
+@Component({
+  selector: 'app-lancamentos',
+  templateUrl: './lancamentos.component.html',
+  styleUrls: ['./lancamentos.component.scss'],
+  standalone: false
+})
+
+export class LancamentosComponent implements OnInit {
+  @ViewChild(BarraFerramentaComponent) barraFerramenta: BarraFerramentaComponent;
+  @ViewChild(DataTableComponent) dataTable: DataTableComponent;
+  lancamentosData: LancamentoDataSet[] = [];
+  columns = LancamentoColumns;
+
+  constructor(
+    private menuService: MenuService,
+    public modalAlert: AlertComponent,
+    public modalForm: ModalFormComponent,
+    public modalConfirm: ModalConfirmComponent,
+    public lancamentoservice: LancamentoService,
+    private despesasFormComponent: DespesasFormComponent,
+    private receitasFormComponent: ReceitasFormComponent,
+    public filterMesAnoService: FilterMesAnoService) { }
+
+  public ngOnInit() {
+    this.menuService.setMenuSelecionado(5);
+    this.initializeDataTable();
+  }
+
+  public initializeDataTable = () => {
+    this.lancamentoservice.getLancamentosByMesAno(dayjs(this.filterMesAnoService.dataMesAno))
+      .subscribe({
+        next: (response: ILancamento[]) => {
+          if (response) {
+            this.lancamentosData = this.parseToLancamentosData(response);
+            this.dataTable.loadData(this.lancamentosData);
+            this.barraFerramenta.setOnChangeDataMesAno(this.updateDatatable);
+            this.dataTable.rerender();
+          }
+        },
+        error: (errorMessage: string) => {
+          this.modalAlert.open(AlertComponent, errorMessage, AlertType.Warning);
+        }
+      });
+  }
+
+  public updateDatatable = () => {
+    this.lancamentoservice.getLancamentosByMesAno(dayjs(this.filterMesAnoService.dataMesAno))
+      .subscribe({
+        next: (response: ILancamento[]) => {
+          if (response) {
+            this.lancamentosData = this.parseToLancamentosData(response);
+            this.dataTable.rerender();
+          }
+        },
+        error: (errorMessage: string) => {
+          this.modalAlert.open(AlertComponent, errorMessage, AlertType.Warning);
+        }
+      });
+  }
+
+  private parseToLancamentosData(lancamentos: ILancamento[]): LancamentoDataSet[] {
+    return lancamentos.map((lancamento: ILancamento) => ({
+      id: lancamento.idDespesa === null ? lancamento.idReceita : lancamento.idDespesa,
+      data: lancamento.data,
+      tipoCategoria: lancamento.tipoCategoria,
+      categoria: lancamento.categoria,
+      descricao: lancamento.descricao,
+      valor: `${lancamento.valor.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })}`
+    }));
+  }
+
+  public onClickEdit = (id: number, tipoCategoria: string) => {
+    let modalRef;
+    if (tipoCategoria === 'Despesa') {
+      modalRef = this.modalForm.modalService.open(DespesasFormComponent, { centered: true });
+      modalRef.shown.subscribe(() => {
+        modalRef.componentInstance.action = Action.Edit;
+        modalRef.componentInstance.setRefresh(this.updateDatatable);
+        modalRef.componentInstance.editDespesa(id);
+      });
+    }
+    else {
+      modalRef = this.modalForm.modalService.open(ReceitasFormComponent, { centered: true });
+      modalRef.shown.subscribe(() => {
+        modalRef.componentInstance.action = Action.Edit;
+        modalRef.componentInstance.setRefresh(this.updateDatatable);
+        modalRef.componentInstance.editReceita(id);
+      });
+    }
+  }
+
+  public onClickDelete = (id: number, tipoCategoria: string) => {
+    let modalRef;
+    if (tipoCategoria === 'Despesa') {
+      modalRef = this.modalConfirm.open(ModalConfirmComponent, `Deseja excluir a despesa ${this.dataTable.row.descricao} ?`);
+      modalRef.shown.subscribe(() => {
+        modalRef.componentInstance.setConfirmButton(() => this.despesasFormComponent.deleteDespesa(id, this.updateDatatable));
+      });
+    }
+    else {
+      modalRef = this.modalConfirm.open(ModalConfirmComponent, `Deseja excluir a receita ${this.dataTable.row.descricao} ?`);
+      modalRef.shown.subscribe(() => {
+        modalRef.componentInstance.setConfirmButton(() => this.receitasFormComponent.deleteReceita(id, this.updateDatatable));
+      });
+    }
+  }
+}

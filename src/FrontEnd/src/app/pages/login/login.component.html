@@ -1,0 +1,78 @@
+<div class="d-flex flex-column full-height">
+  <div class="d-flex align-items-center justify-content-center flex-grow-1 fs-6 fs-sm-5 fs-md-4 fs-lg-3">
+    <div
+      class="d-flex flex-column m-2 border border-4 border-dark rounded-4 align-items-center justify-content-center fs-6 fs-sm-5 fs-md-4 fs-lg-3">
+      <div class="bg-dark w-100 p-2 d-flex flex-column align-items-center justify-content-center">
+        <h1 class="text-light m-0">
+          <a class="navbar-brand align-text-lg-start fs-6 fs-sm-5 fs-md-4 fs-lg-3" href="/">
+            BALANÇO POSITIVO
+          </a>
+        </h1>
+      </div>
+      <form class="p-4 pb-2" (submit)="onLoginClick()" [formGroup]="loginForm">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Email</mat-label>
+          <input matInput required id="email" name="email" formControlName="email" type="text"
+            placeholder="Entre com o seu email" [ngClass]="{
+              'is-invalid text-danger':
+                loginForm.get('email')?.errors?.['required'] &&
+                loginForm.get('email')?.touched
+            }" />
+          <mat-icon matSuffix>
+            <i class="text-danger bi bi-exclamation-circle position-absolute mx-2 top-0 end-0" [ngClass]="{
+                'error-bi-input':
+                  loginForm.get('email')?.hasError('required') &&
+                  loginForm.get('email')?.touched,
+                'not-error-input':
+                  !loginForm.get('email')?.hasError('required') ||
+                  !loginForm.get('email')?.touched
+              }">
+            </i>
+          </mat-icon>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Senha</mat-label>
+          <input matInput required id="senha" name="senha" formControlName="senha" type="passwrod"
+            placeholder="Entre com a sua senha" [type]="showPassword ? 'text' : 'password'" [ngClass]="{
+              'is-invalid':
+                loginForm.get('senha')?.errors?.['required'] &&
+                loginForm.get('senha')?.touched
+            }" />
+          <i class="position-absolute my-2 top-0 end-0" (click)="onTooglePassword()" [ngClass]="eyeIconClass"
+            [class.text-danger]="
+              loginForm.get('senha')?.hasError('required') &&
+              loginForm.get('senha')?.touched
+            "></i>
+        </mat-form-field>
+        <div class="input-group d-flex flex-column align-items-center justify-content-center">
+          <button type="submit" class="btn btn-primary w-100" [ngClass]="{ disabled: !loginForm.valid }"
+            [disabled]="!loginForm.valid">
+            Entrar
+          </button>
+        </div>
+      </form>
+      <div class="g_signin px-4 input-group mb-2 d-flex flex-column align-items-center justify-content-center">
+        <button id="googleSignInButton" class="btn btn-google" (click)="onGoogleLoginClick()">
+          <img src="../../../assets/googleIcon.png" alt="Google" class="google-icon" />
+          Entrar com Google
+        </button>
+      </div>
+      <div class="px-4 input-group d-flex flex-column align-items-center justify-content-center">
+        <div class="d-flex align-items-center w-100 my-1">
+          <hr class="flex-grow-1 border-dark" />
+          <span class="mx-2 fw-bold text-secondary">OU</span>
+          <hr class="flex-grow-1 border-dark" />
+        </div>
+      </div>
+      <div class="px-4 input-group mb-2 d-flex flex-column align-items-center justify-content-center">
+        <div class="d-flex border border-dark align-items-center w-100 my-1">
+          <a class="btn fs-6 fs-sm-5 fs-md-4 fs-lg-3" href="/register">
+            Utilizando pela primeira vez? Inscreva-se
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-footer></app-footer>        
+
+  

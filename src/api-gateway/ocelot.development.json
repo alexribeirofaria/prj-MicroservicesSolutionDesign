@@ -1,0 +1,66 @@
+{
+  "GlobalConfiguration": {
+    "ServiceDiscoveryProvider": {
+      "Scheme": "http",
+      "Host": "internal",
+      "Port": 8500,
+      "Type": "Consul"
+    }
+  },
+  "Routes": [
+    {
+      "ServiceName": "",
+      "DownstreamPathTemplate": "/api/categoria",
+      "UpstreamPathTemplate": "/api/categoria",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "DownstreamScheme": "http",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "internal",
+          "Port": 9001
+        }
+      ],
+      "Priority": 5,
+      "Key": "Categoria"
+    },
+    {
+      "ServiceName": "",
+      "DownstreamPathTemplate": "/api/despesa",
+      "UpstreamPathTemplate": "/api/despesa",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "DownstreamScheme": "http",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "internal",
+          "Port": 9002
+        }
+      ],
+      "Priority": 4,
+      "Key": "Despesa"
+    },
+    {
+      "ServiceName": "",
+      "DownstreamPathTemplate": "/api/receita",
+      "UpstreamPathTemplate": "/api/receita",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "DownstreamScheme": "http",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "internal",
+          "Port": 9003
+        }
+      ],
+      "Priority": 3,
+      "Key": "Receita"
+    }
+  ]
+}

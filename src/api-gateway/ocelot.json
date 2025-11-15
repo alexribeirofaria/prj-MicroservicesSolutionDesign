@@ -1,0 +1,48 @@
+{
+  "GlobalConfiguration": {
+    "ServiceDiscoveryProvider": {
+      "Scheme": "http",
+      "Host": "consul",
+      "Port": 8500,
+      "Type": "Consul"
+    }
+  },
+  "Routes": [
+    {
+      "ServiceName": "categoria-service",
+      "DownstreamPathTemplate": "/api/categoria",
+      "UpstreamPathTemplate": "/api/categoria",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "DownstreamScheme": "https",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "Priority": 5,
+      "Key": "Categoria"
+    },
+    {
+      "ServiceName": "despesa-service",
+      "DownstreamPathTemplate": "/api/despesa",
+      "UpstreamPathTemplate": "/api/despesa",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "DownstreamScheme": "https",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "Priority": 3,
+      "Key": "Despesa"
+    },
+    {
+      "ServiceName": "receita-service",
+      "DownstreamPathTemplate": "/api/receita",
+      "UpstreamPathTemplate": "/api/receita",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "DownstreamScheme": "https",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "Priority": 4,
+      "Key": "Receita"
+    }
+  ]
+}

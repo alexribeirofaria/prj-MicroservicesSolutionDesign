@@ -5,12 +5,17 @@ using Application.Implementations;
 using AuthService.RegistersExtensions;
 using AuthService.Settings;
 using Domain.Entities;
-using Migrations.MySqlServer.CommonInjectDependence;
+using Infrastructure.CommonInjectDependence;
 using Repository.Persistency.Generic;
 using Repository.UnitOfWork;
 using Repository.UnitOfWork.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var env = builder.Environment;
+builder.Configuration
+    .SetBasePath(env.ContentRootPath)
+    .AddEnvironmentVariables();
 
 // Add services to the container.
 builder.WebHost.ConfigureKestrel(serverOptions =>
@@ -26,7 +31,7 @@ builder.Services.AddConsulSettings(serviceSettings);
 builder.Services.AddControllers();
 builder.Services.AddScoped(typeof(IBusinessBase<ReceitaDto, Receita>), typeof(ReceitaBusinessImpl<ReceitaDto>));
 builder.Services.AddAutoMapper(typeof(ReceitaProfile).Assembly);
-builder.Services.ConfigureMySqlServerMigrationsContext(builder.Configuration);
+builder.Services.ConfigureMySqlServerContext(builder.Configuration);
 builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
 builder.Services.AddScoped(typeof(IRepositorio<>), typeof(GenericRepositorio<>));
 builder.Services.AddOptions();

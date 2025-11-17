@@ -38,3 +38,5 @@ despesas-frontend-angular.code-workspace
 **/app-android*
 **/app-ios*
 **/cetificate*
+*.sh
+*.ps1

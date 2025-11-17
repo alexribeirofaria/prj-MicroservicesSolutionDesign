@@ -1,3 +1,4 @@
+using api_gateway.Configuration;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Ocelot.Provider.Consul;
@@ -14,9 +15,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 // Carregar arquivos de configuração
 var env = builder.Environment;
 builder.Configuration
-    .SetBasePath(env.ContentRootPath)
-     .AddJsonFile("appsettings.json", true, true)
-     .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true)
+    .SetBasePath(AppContext.BaseDirectory)
      .AddJsonFile("ocelot.json")
      .AddJsonFile($"ocelot.{env.EnvironmentName}.json", true, true)
      .AddEnvironmentVariables()
@@ -25,8 +24,8 @@ builder.Configuration
 // Registrar Ocelot e agregador
 builder.Services
     .AddOcelot(builder.Configuration)
-    .AddConsul();
-  //.AddTransientDefinedAggregator<BookDetailsAggregator>();
+    .AddConsul<ConsulServiceBuilder>();
+    //.AddTransientDefinedAggregator<BookDetailsAggregator>();
 
 var app = builder.Build();
 

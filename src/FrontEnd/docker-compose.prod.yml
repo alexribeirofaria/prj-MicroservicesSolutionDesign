@@ -1,10 +1,10 @@
 services:
-  despesas-frontend-angular-prod:
+  app-angular-prod:
     container_name: prod
     image: alexfariakof/despesas-frontend-angular-img
     build:
       context: .
-      dockerfile: ./Dockerfile.production
+      dockerfile: ./Dockerfile
     environment:
       NODE_ENV: production
     ports:
@@ -14,3 +14,9 @@ services:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - ./certificate/ssl_certificate.pem:/etc/nginx/certificate/ssl_certificate.pem:ro
       - ./certificate/ssl_certificate.key:/etc/nginx/certificate/ssl_certificate.key:ro
+    deploy:
+      resources:
+        limits:
+          memory: 1G  
+        reservations:
+          memory: 500M

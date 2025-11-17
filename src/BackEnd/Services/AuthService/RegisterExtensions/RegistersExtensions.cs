@@ -28,21 +28,24 @@ public static class ServiceRegistryExtensions
         var logger = app.ApplicationServices.GetRequiredService<ILoggerFactory>().CreateLogger("AppExtensions");
         var lifetime = app.ApplicationServices.GetRequiredService<IHostApplicationLifetime>();
 
-        // Garante que o ID do serviço seja único
-        var machineIdentifier = GetMachineIdentifier(); // Método para obter o identificador da máquina
+        var machineIdentifier = GetMachineIdentifier();
         var hashedMachineIdentifier = ComputeHash(machineIdentifier);
         var serviceInstance = $"{serviceSettings.ServiceName}-{hashedMachineIdentifier}";
+        
+        var uri = new Uri($"{serviceSettings.ServiceDiscoveryAddress}");
+
 
         var registration = new AgentServiceRegistration()
         {
             ID = serviceInstance,
             Name = serviceSettings.ServiceName,
-            Address = serviceSettings.ServiceHost,
-            Port = serviceSettings.ServicePort
+            Address = serviceSettings.ServiceHost,            
+            Port = serviceSettings.ServicePort, 
+            Tags = new[] { $"{serviceSettings.ServiceName}" }
         };
 
         logger.LogInformation("Registring with Consul");
-        consulClient.Agent.ServiceDeregister(registration.ID).ConfigureAwait(true);        
+        consulClient.Agent.ServiceDeregister(registration.ID).ConfigureAwait(true);
         consulClient.Agent.ServiceRegister(registration).ConfigureAwait(true);
 
         lifetime.ApplicationStopping.Register(async () =>
@@ -52,13 +55,30 @@ public static class ServiceRegistryExtensions
 
         return app;
     }
+        
+    private static string GetMachineIdentifier()
+    {
+        var macAddress = GetMacAddress();
+        if (!string.IsNullOrEmpty(macAddress))
+            return macAddress; 
+   
+        return GetMachineGuid();
+    }
+        
+    private static string GetMacAddress()
+    {
+        var networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+        var macAddress = networkInterfaces
+            .Where(nic => nic.OperationalStatus == OperationalStatus.Up) 
+            .Select(nic => nic.GetPhysicalAddress().ToString())
+            .FirstOrDefault();
+
+        return macAddress;
+    }
 
     private static string GetMachineGuid()
     {
-        // Usando o nome da máquina como identificador fixo
         var machineName = Environment.MachineName;
-
-        // Gerando um GUID a partir do nome da máquina (garante que o GUID será sempre o mesmo para esta máquina)
         var guid = Guid.TryParse(machineName, out var parsedGuid)
             ? parsedGuid
             : Guid.NewGuid();
@@ -66,28 +86,13 @@ public static class ServiceRegistryExtensions
         return guid.ToString();
     }
 
-    private static string GetMachineIdentifier()
-    {
-        // Usa o primeiro endereço MAC encontrado para identificar a máquina de forma única
-        var networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
-        var macAddress = networkInterfaces
-            .Where(nic => nic.OperationalStatus == OperationalStatus.Up)
-            .Select(nic => nic.GetPhysicalAddress())
-            .FirstOrDefault();
-
-        // Se o endereço MAC não for encontrado, você pode usar um GUID como fallback
-        return macAddress?.ToString() ?? GetMachineGuid();
-    }
-
     private static string ComputeHash(string input)
     {
         using (var sha256 = SHA256.Create())
         {
-            // Converte a entrada em um array de bytes e calcula o hash
             var bytes = Encoding.UTF8.GetBytes(input);
             var hashBytes = sha256.ComputeHash(bytes);
 
-            // Converte o hash para uma string hexadecimal
             return string.Concat(hashBytes.Select(b => b.ToString("x2")));
         }
     }

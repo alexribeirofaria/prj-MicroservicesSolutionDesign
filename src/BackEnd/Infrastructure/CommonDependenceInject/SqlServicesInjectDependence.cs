@@ -6,12 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 
-namespace Migrations.MySqlServer.CommonInjectDependence
+namespace Infrastructure.CommonInjectDependence
 {
-    public static class MigrationsMySqlServerInjectDependence
+    public static class MySqlServerInjectDependence
     {
         // Método único que trata tanto da configuração com IConfiguration quanto com string de conexão.
-        public static IServiceCollection ConfigureMySqlServerMigrationsContext(
+        public static IServiceCollection ConfigureMySqlServerContext(
             this IServiceCollection services,
             IConfiguration configuration)
         {

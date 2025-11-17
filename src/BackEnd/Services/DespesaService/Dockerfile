@@ -6,9 +6,9 @@ EXPOSE 9002
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build 
 
 WORKDIR /src/
-COPY . .
+COPY ./src .
 
-WORKDIR /src/Services/DespesaService
+WORKDIR /src/BackEnd/Services/DespesaService
 RUN dotnet publish "./DespesaService.csproj" -o /app/publish /p:UseAppHost=false
 
 FROM base AS final

@@ -1,0 +1,27 @@
+﻿services:
+  app-sts:
+    image: ${DOCKER_REGISTRY-}sts
+    build:
+      context: .
+      dockerfile: IdentityServer/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+    networks:
+        - gateway-net    
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro    
+    deploy:
+      update_config:
+        order: start-first 
+      resources:
+        limits:
+          memory: 256M  
+        reservations:
+          memory: 128M
+
+networks:
+   gateway-net:
+     name: "gateway-net"

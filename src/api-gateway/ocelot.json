@@ -1,19 +1,23 @@
 {
   "GlobalConfiguration": {
+    "UseServiceDiscovery": true,
     "ServiceDiscoveryProvider": {
       "Scheme": "http",
       "Host": "consul",
       "Port": 8500,
-      "Type": "Consul"
+      "Type": "Consul",
+      "ConfigurationKey": "Ocelot_Production",
+      "PollingInterval": 100000
     }
   },
+  "DownstreamScheme": "http",
   "Routes": [
     {
       "ServiceName": "categoria-service",
       "DownstreamPathTemplate": "/api/categoria",
       "UpstreamPathTemplate": "/api/categoria",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
@@ -25,7 +29,7 @@
       "DownstreamPathTemplate": "/api/despesa",
       "UpstreamPathTemplate": "/api/despesa",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
@@ -37,7 +41,7 @@
       "DownstreamPathTemplate": "/api/receita",
       "UpstreamPathTemplate": "/api/receita",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },

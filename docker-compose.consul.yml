@@ -2,27 +2,34 @@
   consul:
     image: consul:1.15.4
     container_name: consul
+    hostname: consul
     environment:
       - CONSUL_BIND_INTERFACE=eth0
+    networks:
+        - gateway-net
     ports:
        - 8500:8500
        - "8600:8600/udp"
-    hostname: "consul"
+    restart: always
     command: [
       "agent",
       "-server",
       "-ui",
-      "-node=consul-server",
       "-bootstrap-expect=1",
-      "-client=0.0.0.0"
+      "-client=0.0.0.0",
+      "-bind=0.0.0.0"
     ]
-    networks:
-      - gateway
     deploy:
       update_config:
-        order: start-first
+        order: start-first 
+      resources:
+        limits:
+          memory: 256M  
+        reservations:
+          memory: 128M
+
 
 networks:
-  gateway:
-    name: gateway  
-    driver: bridge 
+  gateway-net:
+    driver: bridge
+    name: "gateway-net"

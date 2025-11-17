@@ -4,7 +4,9 @@
       "Scheme": "http",
       "Host": "internal",
       "Port": 8500,
-      "Type": "Consul"
+      "Type": "Consul",
+      "ConfigurationKey": "Ocelot_Development",
+      "PollingInterval": 100000
     }
   },
   "Routes": [

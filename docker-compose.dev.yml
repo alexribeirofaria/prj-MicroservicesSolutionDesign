@@ -2,10 +2,10 @@
   api-gateway:
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      ASPNETCORE_URLS: http://+:4000
-      ASPNETCORE_HTTP_PORTS: 4000
+      ASPNETCORE_URLS: http://+:5000
+      ASPNETCORE_HTTP_PORTS: 5000
     ports:
-      - 4000:9000
+      - 5000:9000
     build:  
       context: .
       dockerfile: ./src/api-gateway/Dockerfile
@@ -20,18 +20,23 @@
         limits:
           memory: 256M  
         reservations:
-          memory: 128M 
-
-  categoria-service:
+          memory: 128M     
+  categoria-service-dev:
+    container_name: categoria-service-dev
+    hostname: categoria-service
+    image: ${DOCKER_REGISTRY-}categoria-service-dev
+    build: 
+      context: .
+      dockerfile: ./src/BackEnd/Services/CategoriaService/Dockerfile
     environment:
-      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_ENVIRONMENT: Development
     volumes:
       - ${LOCALAPPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${LOCALAPPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-    networks:
-      - gateway-net
+      - ./src/BackEnd/Services/CategoriaService/appsettings.json:/app/appsettings.development.json:ro
+    networks: 
+      - "gateway-net"
     mac_address: 02:42:ac:11:00:02
-
     deploy:
       resources:
         limits:
@@ -39,12 +44,19 @@
         reservations:
           memory: 128M 
 
-  despesa-service:
+  despesa-service-dev:
+    container_name: despesa-service-dev
+    hostname: despesa-service
+    image: ${DOCKER_REGISTRY-}despesa-service-dev
+    build: 
+      context: .
+      dockerfile: ./src/BackEnd/Services/DespesaService/Dockerfile
     environment:
-      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_ENVIRONMENT: Development
     volumes:
       - ${LOCALAPPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${LOCALAPPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ./src/BackEnd/Services/DespesaService/appsettings.json:/app/appsettings.development.json:ro
     networks:
       - gateway-net
     mac_address: 02:42:ac:11:00:03
@@ -54,15 +66,22 @@
           memory: 256M  
         reservations:
           memory: 128M 
-
-  receita-service:
+            
+  receita-service-dev:
+    container_name: receita-service-dev
+    hostname: receita-service
+    image: ${DOCKER_REGISTRY-}receita-service-dev
+    build: 
+      context: .
+      dockerfile: ./src/BackEnd/Services/ReceitaService/Dockerfile
     environment:
-      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_ENVIRONMENT: Development
     volumes:
       - ${LOCALAPPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${LOCALAPPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ./src/BackEnd/Services/ReceitaService/appsettings.json:/app/appsettings.development.json:ro
     networks:
-      - gateway-net
+      - "gateway-net"
     mac_address: 02:42:ac:11:00:04
     deploy:
       resources:
@@ -70,36 +89,6 @@
           memory: 256M  
         reservations:
           memory: 128M 
-
-
-  consul:
-    image: consul:1.15.4
-    container_name: consul
-    hostname: consul
-    environment:
-      - CONSUL_BIND_INTERFACE=eth0
-    networks:
-        - gateway-net
-    ports:
-       - 8500:8500
-       - "8600:8600/udp"
-    restart: always
-    command: [
-      "agent",
-      "-server",
-      "-ui",
-      "-bootstrap-expect=1",
-      "-client=0.0.0.0",
-      "-bind=0.0.0.0"
-    ]
-    deploy:
-      update_config:
-        order: start-first 
-      resources:
-        limits:
-          memory: 256M  
-        reservations:
-          memory: 128M
 
 networks:
   gateway-net:

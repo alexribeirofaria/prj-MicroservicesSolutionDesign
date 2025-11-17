@@ -38,4 +38,10 @@
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</Content>
 	</ItemGroup>
+	
+	<ItemGroup>
+	  <None Update="docker-compose.override.yml">
+	    <DependentUpon>docker-compose.yml</DependentUpon>
+	  </None>
+	</ItemGroup>
 </Project>

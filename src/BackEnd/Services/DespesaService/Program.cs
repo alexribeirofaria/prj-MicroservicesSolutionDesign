@@ -4,7 +4,7 @@ using Application.Implementations;
 using AuthService.RegistersExtensions;
 using AuthService.Settings;
 using Domain.Entities;
-using Migrations.MySqlServer.CommonInjectDependence;
+using Infrastructure.CommonInjectDependence;
 using Repository.Persistency.Generic;
 using Repository.UnitOfWork;
 using Repository.UnitOfWork.Abstractions;
@@ -30,10 +30,10 @@ builder.Services.AddConsulSettings(serviceSettings);
 builder.Services.AddControllers();
 builder.Services.AddScoped(typeof(IBusinessBase<DespesaDto, Despesa>), typeof(DespesaBusinessImpl<DespesaDto>));
 builder.Services.AddAutoMapper(typeof(DespesaProfile).Assembly);
-builder.Services.ConfigureMySqlServerMigrationsContext(builder.Configuration);
 builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
 builder.Services.AddScoped(typeof(IRepositorio<>), typeof(GenericRepositorio<>));
 builder.Services.AddOptions();
+builder.Services.ConfigureMySqlServerContext(builder.Configuration);
 
 var app = builder.Build();
 

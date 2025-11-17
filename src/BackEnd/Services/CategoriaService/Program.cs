@@ -5,15 +5,19 @@ using AuthService.RegistersExtensions;
 using AuthService.Settings;
 using CrossCutting.CommonDependenceInject;
 using Domain.Entities;
-using Migrations.MySqlServer.CommonInjectDependence;
 using Repository.Persistency.Generic;
 using Repository.UnitOfWork;
 using Repository.UnitOfWork.Abstractions;
+using Infrastructure.CommonInjectDependence;
 
 var builder = WebApplication.CreateBuilder(args);
-// Add services to the container.
 
-// Configurar Kestrel (porta 9000 e remover header do servidor)
+var env = builder.Environment;
+builder.Configuration
+    .SetBasePath(env.ContentRootPath)
+    .AddEnvironmentVariables();
+
+// Add services to the container.
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     serverOptions.AddServerHeader = false;
@@ -21,13 +25,14 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 });
 
 var serviceSettings = builder.Configuration.GetSection("ServiceSettings").Get<ServiceSettings>();
+
 builder.Services.StartupBootstrap(builder.Configuration); 
 builder.Services.AddConsulSettings(serviceSettings);
 
 builder.Services.AddControllers();
-builder.Services.ConfigureMySqlServerMigrationsContext(builder.Configuration);
 builder.Services.AddScoped(typeof(ICategoriaBusiness<CategoriaDto, Categoria>), typeof(CategoriaBusinessImpl<CategoriaDto>));
 builder.Services.AddAutoMapper(typeof(CategoriaProfile).Assembly);
+builder.Services.ConfigureMySqlServerContext(builder.Configuration);
 builder.Services.AddCrossCuttingConfiguration();
 builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
 builder.Services.AddScoped(typeof(IRepositorio<>), typeof(GenericRepositorio<>));
